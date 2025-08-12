@@ -1,27 +1,40 @@
 # pages/3_Scenarios.py
-
 import streamlit as st
-from utils.db_connection import run_query
+from scenario_1 import show_scenario_1
+from scenario_2 import show_scenario_2
+from scenario_3 import show_scenario_3
+from scenario_4 import show_scenario_4
+from scenario_5 import show_scenario_5
+from scenario_6 import show_scenario_6 # <-- Import the final scenario function
 
-st.title("📊 Scenario-Based Analysis")
+st.set_page_config(layout="wide")
+st.title("📊 Business Scenarios")
 
-# Scenario 1: Top States by Transaction Count (Sample)
-st.header("Scenario 1: Decoding Transaction Dynamics")
+# --- Use tabs for different scenarios ---
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "Scenario 1: Transactions",
+    "Scenario 2: Market Expansion",
+    "Scenario 3: States & Districts",
+    "Scenario 4: Insurance",
+    "Scenario 5: User Engagement",
+    "Scenario 6: Registration Analysis" # <-- Updated tab name
+])
 
-query = """
-SELECT 
-    state, 
-    SUM(txn_amount) AS total_transaction_value
-FROM aggregated_transactions
-WHERE year IN (2023, 2024) AND quarter IN (1, 2, 3, 4)
-GROUP BY state
-ORDER BY total_transaction_value DESC;
-"""
+with tab1:
+    show_scenario_1()
 
-df = run_query(query)
+with tab2:
+    show_scenario_2()
 
-st.write("### 🔝 Top 10 States by Transaction Count (Q4 2023)")
-st.dataframe(df)
+with tab3:
+    show_scenario_3()
 
-# Optional: Visualization
-st.bar_chart(df.set_index("state"))
+with tab4:
+    show_scenario_4()
+
+with tab5:
+    show_scenario_5()
+    
+with tab6:
+    # This will display all the content from your final scenario
+    show_scenario_6()

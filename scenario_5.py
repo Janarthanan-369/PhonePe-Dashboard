@@ -79,7 +79,7 @@ def question_2_peak_user_growth_quarter():
             peak_growth_df = df.loc[df['user_increase'].idxmax()]
             st.metric(
                 label="Peak Growth Quarter",
-                value=str(peak_growth_df['period']),
+                value=peak_growth_df['period'],
                 delta=f"{peak_growth_df['user_increase']:,.0f} new users"
             )
 
@@ -128,7 +128,7 @@ def question_3_lowest_engagement_states():
         st.error(f"An error occurred: {e}")
 
 def question_4_engagement_ratio_over_time():
-    """Q4: How does the ratio of registered users to app opens vary across time?"""
+    """Q4: How does the ratio of app opens to registered users vary across time?"""
     st.subheader("User Engagement Ratio Over Time (Nationwide)")
     query = """
     SELECT
@@ -159,19 +159,20 @@ def question_5_district_engagement_2022():
     """Q5: Which districts had the highest user engagement rate in 2022?"""
     st.subheader("Top 10 Districts by User Engagement in 2022")
     st.info("Engagement is calculated as total app opens in 2022 divided by registered users at the end of the year (Q4 2022).")
+    # CORRECTED QUERY
     query = """
     SELECT
         district_name,
         state_name,
         CASE
-            WHEN MAX(CASE WHEN quarter = 4 THEN registered_user ELSE 0 END) > 0
-            THEN SUM(app_opens)::float / MAX(CASE WHEN quarter = 4 THEN registered_user ELSE 0 END)
+            WHEN MAX(CASE WHEN quarter = 4 THEN registered_users ELSE 0 END) > 0
+            THEN SUM(app_opens)::float / MAX(CASE WHEN quarter = 4 THEN registered_users ELSE 0 END)
             ELSE 0
         END as engagement_rate
     FROM map_user
     WHERE year = 2022
     GROUP BY district_name, state_name
-    HAVING MAX(CASE WHEN quarter = 4 THEN registered_user ELSE 0 END) > 1000
+    HAVING MAX(CASE WHEN quarter = 4 THEN registered_users ELSE 0 END) > 1000
     ORDER BY engagement_rate DESC
     LIMIT 10;
     """
@@ -191,7 +192,7 @@ def question_5_district_engagement_2022():
 def show_scenario_5():
     st.header("🔹 Scenario 5: User Engagement and Growth Strategy")
     st.markdown("Analyze app opens and registered users to guide engagement improvements.")
-    
+
     question = st.selectbox("Choose a question to analyze:", [
         "Which states have the highest number of app opens per registered user?",
         "In which quarter did PhonePe see the largest increase in registered users?",
